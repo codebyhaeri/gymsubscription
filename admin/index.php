@@ -32,35 +32,6 @@
     <link rel="stylesheet" href="../css/bootstrap.css"> 
 </head>
 <body>
-            <!-- jQuery (required) -->
-            <script>
-                $(document).ready(function () {
-                $('#AddNewFitMem-form').off('submit').on('submit', function (e) {
-                    e.preventDefault();
-
-                    let formData = new FormData(this);
-
-                    $.ajax({
-                    url: 'new_fitness_trainer.php',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        $('#message-container').html('<p style="color:green;">Trainer added successfully!</p>');
-                        console.log('Response:', response);
-                        $('#AddNewFitMem-form')[0].reset();
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('AJAX Error:', error);
-                        $('#message-container').html('<p style="color:red;">A network error occurred.</p>');
-                    }
-                    });
-                });
-                });
-
-            </script>
-
 
     <!--========================= Sidebar Navigation ============================== -->
         <aside class="sidebar">
@@ -92,6 +63,8 @@
                 </div>
             </nav>
         </aside>
+
+
 
                     <!--========================= Page starts here ============================== -->
 
@@ -253,7 +226,7 @@
             } //end of memberships page 
 
 
-//=========================================== page - Fitness Trainers ======================================================  
+//=========================================== page - Fitness Trainers ==================================================  
 
 
     if($_GET['page'] == 'fitness_trainers'){ ?>
@@ -299,10 +272,12 @@
                             $result = mysqli_query($conn, $sql_get_fm);
                             $data_row = mysqli_fetch_assoc($result);
                         ?>
-                            <!-- ==============Update Fitness Member form ================-->
-                                    <form action="update_fitness_trainer.php" method="POST" class="subscription-form" id="UpdateFitMem-form">
+
+                                    <!-- ==============Update Fitness Member form ================-->
+                                    <form action="update_fitness_trainer.php" method="POST" class="fitness_trainer-form" id="UpdateFitMem-form">
                                         <div class="UpdateFitMem">
                                             <h2>Update Fitness Trainer</h2>
+                                            <div id="message-container-fitness" class="message-container-fitness"></div>
                                         </div>
 
                                         <input type="hidden" name="fmu_trainer_id" value="<?php echo $data_row['trainer_id']; ?>">
@@ -326,21 +301,18 @@
                                                 required 
                                                 oninput="this.value = this.value.replace(/[^0-9]/g, '');"> 
                                         </div>
-                                        <!-- <div class="form-group">
-                                            <label for="fmu_trainer_prof_img">Specialization:</label>
-                                            <input value="phpechohere" type="file" name="fmu_trainer_prof_img" required>
-                                        </div>  -->
                                         <button type="submit" class="btn-save">Update Fitness Member</button>
                                     </form>
-                                <div id="message-container" class="message-container"></div>
+                            
                     <?php } ?>
 
 
 
-                <!--============= Add Fitness Member form===============-->
-                    <form action="new_fitness_trainer.php" method="POST" class="subscription-form" id="AddNewFitMem-form">
+                <!--============= Add Fitness Trainer form===============-->
+                    <form action="new_fitness_trainer.php" method="POST" class="fitness_trainer-form" id="AddNewFitMem-form">
                         <div class="addNewFitMem"> 
                             <h2>Add New Fitness Member</h2>
+                            <div id="message-container-fitness" class="message-container-fitness"></div>
                         </div>
                         <div class="form-group">
                             <label for="fmn_trainer_fullname">Trainer Name:</label>
@@ -365,13 +337,11 @@
                             <label for="fmn_trainer_prof_img">Trainer Profile Photo</label>
                             <input type="file" name="fmn_trainer_prof_img" id="fmn_trainer_prof_img" required>
                         </div>
-                    <button type="submit" class="btn-save">Add New Fitnes Member</button>
-                <div id="message-container" class="message-container"></div>
+                    <button type="submit" class="btn-save">Add New Fitness Member</button>
 
 
-                    
-
-                            <!--==========Active Fitness Member ===========-->
+                
+                            <!--====--======Active Fitness Member =====----======-->
                                 <div class="subscription-plans">  <!-- check css of this "subscription-plans" --> 
                                     <div class="plan-table">
                                         <h3>Active Fitness Members</h3>
@@ -406,7 +376,7 @@
                                         </table>
                                     </div>
 
-                                    <!--============Inactive Fitness Member============-->
+                            <!--============Inactive Fitness Member============-->
                                     <div class="plan-table">
                                         <h3>Inactive Fitness Members</h3>
                                         <?php
@@ -440,7 +410,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </div> <!-- end of subscription_plans -->
         </div> <!--end form-container-->
 
 
@@ -501,10 +471,11 @@
                             $result = mysqli_query($conn, $sql_get_plan_info);
                             $data_row = mysqli_fetch_assoc($result);
             ?>
-                <!-- Update subscription form -->
+                <!--========= Update subscription form ================-->
                         <form action="update_subs_plan.php" method="POST" class="subscription-form" id="UpdateSubsPlan-subscription-form">
                             <div class="UpdateSubsPlan">
                                 <h2>Update Subscription Plan</h2>
+                                <div id="message-container-subscription" class="message-container-subscription"></div>
                             </div>
                             <input type="hidden" name="u_plan_id" value="<?php echo $data_row['plan_id']; ?>">
                             <div class="form-group"> 
@@ -540,13 +511,13 @@
                             </div>
                             <button type="submit" class="btn-save">Update Subscription Plan</button>
                         </form>
-                        <div id="message-container" class="message-container"></div>
                     <?php } ?>
 
                 <!--============= Add New Subscription form===============-->
                     <form action="new_subs_plan.php" method="POST" class="subscription-form" id="AddNewSubsPlan-subscription-form">
                         <div class="addNewSubsPlan">
                             <h2>Add New Subscription Plan</h2>
+                            <div id="message-container-subscription" class="message-container-subscription"></div>
                         </div>
                         <div class="form-group">
                             <label for="n_plan_name">Subscription Name:</label>
@@ -580,7 +551,6 @@
                         </div>
                         <button type="submit" class="btn-save">Save Subscription Plan</button>
                     </form>
-                    <div id="message-container" class="message-container"></div>
 
 
                     
@@ -666,7 +636,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </div> <!--end subscription-->
         </div> <!--end form-container-->
 
         <?php 
@@ -686,280 +656,8 @@
     <?php 
         } //end of page
     ?>
-    <!-- =========================================== Javascript ============================================   -->
-                
-               <script>
-                    const form = document.getElementById('AddNewSubsPlan-subscription-form');
-                    const messageContainer = document.getElementById('message-container');
 
-                    let isSubmitting = false; // Prevent double submission
-
-                    form.addEventListener('submit', (event) => {
-                        event.preventDefault();
-                        if (isSubmitting) return; // Prevent multiple clicks
-                        isSubmitting = true;
-
-                        const formData = new FormData(form);
-
-                        fetch('new_subs_plan.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                showMessage('success', 'Subscription Plan Added Successfully.');
-
-                                // Show spinner after success message
-                                setTimeout(() => {
-                                    showMessage('info', 'Updating Active Subscription Plans...');
-                                    showLoadingSpinner();
-                                }, 3000);
-
-                                // Reload the page after delay
-                                setTimeout(() => {
-                                    removeLoadingSpinner();
-                                    window.location.reload();
-                                }, 6000);
-                            } else {
-                                showMessage('error', data.message || 'There was an error. Please try again.');
-                            }
-                        })
-                        .catch(error => {
-                            showMessage('error', 'An error occurred. Please try again later.');
-                        })
-                        .finally(() => {
-                            isSubmitting = false;
-                        });
-                    });
-
-                    function showMessage(type, message) {
-                        const messageElement = document.createElement('div');
-                        messageElement.classList.add('alert', `alert-${type}`);
-                        messageElement.textContent = message;
-                        messageContainer.insertBefore(messageElement, messageContainer.firstChild);
-
-                        setTimeout(() => {
-                            messageElement.remove();
-                        }, 5000);
-                    }
-
-                    function removeLoadingSpinner() {
-                        const spinner = document.getElementById('loading-spinner');
-                        if (spinner) {
-                            spinner.remove();
-                        }
-                    }
-                </script>
-
-
-        <!-- update subs plan js -->
-               <script>
-                const updateForm = document.getElementById('UpdateSubsPlan-subscription-form');
-
-                    function showMessage(type, message) {
-                        const container = document.getElementById('message-container');
-                        container.innerHTML = `<div class="alert ${type}">${message}</div>`;
-                    }
-
-                    function showLoadingSpinner() {
-                        const spinner = document.createElement('div');
-                        spinner.id = 'loading-spinner';
-                        spinner.innerHTML = '⏳ Updating...';
-                        document.body.appendChild(spinner);
-                    }
-
-                    function removeLoadingSpinner() {
-                        const spinner = document.getElementById('loading-spinner');
-                        if (spinner) spinner.remove();
-                    }
-
-                    if (updateForm) {
-                        let isUpdating = false;
-
-                        updateForm.addEventListener('submit', async (event) => {
-                            event.preventDefault();
-                            if (isUpdating) return;
-                            isUpdating = true;
-
-                            const formData = new FormData(updateForm);
-
-                            // Manual validation
-                            const requiredFields = [
-                                'u_plan_name',
-                                'u_plan_type',
-                                'u_plan_tier',
-                                'u_plan_price',
-                                'u_plan_duration_days',
-                                'u_plan_desc'
-                            ];
-
-                            for (let field of requiredFields) {
-                                if (!formData.get(field)) {
-                                    showMessage('error', `Please fill in ${field.replace('u_', '').replace('_', ' ')}.`);
-                                    isUpdating = false;
-                                    return;
-                                }
-                            }
-
-                            showLoadingSpinner();
-
-                            try {
-                                const response = await fetch('update_subs_plan.php', {
-                                    method: 'POST',
-                                    body: formData
-                                });
-
-                                const data = await response.json();
-
-                                if (data.success) {
-                                    showMessage('success', 'Subscription Plan Updated Successfully.');
-
-                                    setTimeout(() => {
-                                        window.location.href = '../admin/index.php?page=subsplan';
-                                    }, 2000);
-                                } else {
-                                    showMessage('error', data.message || 'Update failed. Try again.');
-                                }
-                            } catch (error) {
-                                console.error('Fetch error:', error);
-                                showMessage('error', 'An unexpected error occurred.');
-                            } finally {
-                                removeLoadingSpinner();
-                                isUpdating = false;
-                            }
-                        });
-                    }
-                </script>
-                
-        <!-- add new fitness trainer -->
-            <script>
-                const fitForm = document.getElementById('AddNewFitMem-form');
-                const msgContainer = document.getElementById('message-container');
-
-                fitForm.addEventListener('submit', (event) => {
-                    event.preventDefault();
-
-                    const formData = new FormData(fitForm);
-
-                    fetch('new_fitness_trainer.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showMessage('success', 'Fitness Trainer Added Successfully!');
-
-                            // Optional: clear form
-                            fitForm.reset();
-
-                            // Optional: reload trainers
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 3000);
-                        } else {
-                            showMessage('danger', data.message || 'An error occurred. Please try again.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showMessage('danger', 'A network error occurred.');
-                    });
-                });
-
-                function showMessage(type, message) {
-                    const div = document.createElement('div');
-                    div.className = `alert alert-${type}`;
-                    div.textContent = message;
-                    msgContainer.innerHTML = ''; // Clear previous
-                    msgContainer.appendChild(div);
-                    setTimeout(() => {
-                        div.remove();
-                    }, 5000);
-                }
-            </script>
-
-            <!-- update fitness member js -->
-               <script>
-                const UpdateFitnessForm = document.getElementById('UpdateFitMem-form');
-
-                    function showMessage(type, message) {
-                        const container = document.getElementById('message-container');
-                        container.innerHTML = `<div class="alert ${type}">${message}</div>`;
-                    }
-
-                    function showLoadingSpinner() {
-                        const spinner = document.createElement('div');
-                        spinner.id = 'loading-spinner';
-                        spinner.innerHTML = '⏳ Updating...';
-                        document.body.appendChild(spinner);
-                    }
-
-                    function removeLoadingSpinner() {
-                        const spinner = document.getElementById('loading-spinner');
-                        if (spinner) spinner.remove();
-                    }
-
-                    if (UpdateFitnessForm) {
-                        let isUpdating = false;
-
-                        UpdateFitnessForm.addEventListener('submit', async (event) => {
-                            event.preventDefault();
-                            if (isUpdating) return;
-                            isUpdating = true;
-
-                            const formData = new FormData(UpdateFitnessForm);
-
-                            // Manual validation
-                            const requiredFields = [
-                                'fmu_trainer_id',
-                                'fmu_trainer_fullname',
-                                'fmu_trainer_spzn',
-                                'fmu_trainer_contact_no',
-                            ];
-
-                            for (let field of requiredFields) {
-                                if (!formData.get(field)) {
-                                    showMessage('error', `Please fill in ${field.replace('u_', '').replace('_', ' ')}.`);
-                                    isUpdating = false;
-                                    return;
-                                }
-                            }
-
-                            showLoadingSpinner();
-
-                            try {
-                                const response = await fetch('update_fitness_trainer.php', {
-                                    method: 'POST',
-                                    body: formData
-                                });
-
-                                const data = await response.json();
-
-                                if (data.success) {
-                                    showMessage('success', 'Fitness Member Updated Successfully.');
-
-                                    setTimeout(() => {
-                                        window.location.href = '../admin/index.php?page=fitness_trainers';
-                                    }, 2000);
-                                } else {
-                                    showMessage('error', data.message || 'Update failed. Try again.');
-                                }
-                            } catch (error) {
-                                console.error('Fetch error:', error);
-                                showMessage('error', 'An unexpected error occurred.');
-                            } finally {
-                                removeLoadingSpinner();
-                                isUpdating = false;
-                            }
-                        });
-                    }
-                </script>
-
-
-
-
-                <script src="../js/bootstrap.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../js/admin_script.js"></script>
 </body>
 </html>
