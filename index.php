@@ -57,8 +57,7 @@ if(isset($_SESSION['l_user_type'])) {
                                 Join the ultimate fitness experience with state-of-the-art equipment, expert trainers, and premium facilities. Start your fitness journey today!
                             </p>
                             <div class="hero-btn">
-                                <a class="btn" href="price.html">Join Now</a>
-                                <a class="btn" href="contact.html">Free Trial</a>
+                                <a class="btn" href="register.php">Join Now</a>
                             </div>
                         </div>
                     </div>
@@ -409,8 +408,5 @@ if(isset($_SESSION['l_user_type'])) {
 
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
-    </body>
-</html>
-
 </body>
-</ftml>
+</html>

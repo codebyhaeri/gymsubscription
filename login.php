@@ -57,7 +57,7 @@
             </button>
         </form>
 
-        <p class="text-center text-gray-600">Don't have an account? <a href="signup.php" class="text-light hover:underline">
+        <p class="text-center text-gray-600">Don't have an account? <a href="register.php" class="text-light hover:underline">
             Register</a>
         </p>
     </div>

@@ -63,14 +63,17 @@ if(isset($_GET['logout'])){
                         <div class="navbar-nav ml-auto">
                             <a href="?page=home" class="nav-item nav-link">Home</a>
                             <a href="?page=about" class="nav-item nav-link">About</a>
-                            <a href="?page=facilities" class="nav-item nav-link">Facilities</a>
-                            <a href="?page=memberships" class="nav-item nav-link">Memberships</a>
+                            <!-- <a href="?page=memberships" class="nav-item nav-link">Memberships</a> -->
                             <a href="?page=trainers" class="nav-item nav-link">Trainers</a>
-                            <a href="?page=contact" class="nav-item nav-link">Contact</a>
+                            <a href="?page=programs" class="nav-item nav-link">Programs</a>
+                            <a href="?page=memberships" class="nav-item nav-link">Memberships</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Account</a>
                                 <div class="dropdown-menu">
+                                    <!-- <a href="../common_user/edit_profile.php" class="dropdown-item">Profile</a> -->
+                                    <a href="?page=editProfile" class="dropdown-item">Profile</a>
                                     <a href="?logout=true" class="dropdown-item">Log Out</a>
+                                    <a href="../common_user/subscribe.php" class="dropdown-item">Subscribe</a>
                                 </div>
                             </div>
                         </div>

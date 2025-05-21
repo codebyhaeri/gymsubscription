@@ -77,7 +77,7 @@
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Account</a>
                             <div class="dropdown-menu">
                                 <a href="login.php" class="dropdown-item">Log In</a>
-                                <a href="signup.php" class="dropdown-item">Sign Up</a>
+                                <a href="register.php" class="dropdown-item">Sign Up</a>
                             </div>
                         </div>
                     </div>
