@@ -1,53 +1,57 @@
 <?php
-    header('Content-Type: application/json');
-    include __DIR__ . "/../config/db_connect.php";
+header('Content-Type: application/json');
+include __DIR__ . "/../config/db_connect.php";
 
-    if (isset($_POST['fmn_trainer_fullname'])) {
-        $uploadOk = 1;
-        $target_dir = "../img/";
-        $target_file = $target_dir . basename($_FILES["fmn_trainer_prof_img"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+if (isset($_POST['ppn_program_name'])) {
+    $uploadOk = 1;
+    $target_dir = "../img/";
+    $target_file = $target_dir . basename($_FILES["ppn_program_img"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-        // Validate image
-        $check = getimagesize($_FILES["fmn_trainer_prof_img"]["tmp_name"]);
-        if ($check === false) {
-            echo json_encode(['success' => false, 'message' => 'File is not an image.']);
-            exit;
-        }
-
-        // Validate file type
-        if (!in_array($imageFileType, ["jpg", "jpeg", "png", "gif"])) {
-            echo json_encode(['success' => false, 'message' => 'Only JPG, JPEG, PNG, and GIF files are allowed.']);
-            exit;
-        }
-
-        // Move file
-        if (!move_uploaded_file($_FILES["fmn_trainer_prof_img"]["tmp_name"], $target_file)) {
-            echo json_encode(['success' => false, 'message' => 'Failed to upload image.']);
-            exit;
-        }
-
-        // Prepare data
-        $db_filename = basename($_FILES["fmn_trainer_prof_img"]["name"]);
-        $trainer_fullname = $_POST['fmn_trainer_fullname'];
-        $trainer_specialization = $_POST['fmn_trainer_spzn'];
-        $trainer_contact = $_POST['fmn_trainer_contact_no'];
-
-        $sql = "INSERT INTO `fitness_trainers`
-                (`trainer_fullname`, `trainer_specialization`, `trainer_contact_number`, `trainer_profile_image`)
-                VALUES
-                ('$trainer_fullname', '$trainer_specialization', '$trainer_contact', '$db_filename')";
-
-        $result = mysqli_query($conn, $sql);
-
-        if ($result) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'error' => mysqli_error($conn)]);
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Missing required data.']);
+    // Validate image
+    $check = getimagesize($_FILES["ppn_program_img"]["tmp_name"]);
+    if ($check === false) {
+        echo json_encode(['success' => false, 'message' => 'File is not an image.']);
+        exit;
     }
+
+    // Validate file type
+    if (!in_array($imageFileType, ["jpg", "jpeg", "png", "gif"])) {
+        echo json_encode(['success' => false, 'message' => 'Only JPG, JPEG, PNG, and GIF files are allowed.']);
+        exit;
+    }
+
+    // Move file
+    if (!move_uploaded_file($_FILES["ppn_program_img"]["tmp_name"], $target_file)) {
+        echo json_encode(['success' => false, 'message' => 'Failed to upload image.']);
+        exit;
+    }
+
+    // Prepare data
+    $db_filename = basename($_FILES["ppn_program_img"]["name"]);
+    $program_name = $_POST['ppn_program_name'];
+    $goal = $_POST['ppn_program_goal'];
+    $description = $_POST['ppn_program_desc'];
+    $duration = intval($_POST['ppn_program_duration_weeks']);
+    $trainer_id = intval($_POST['ppn_program_trainer']);
+
+    $sql = "INSERT INTO `fitness_programs`
+            (`program_name`, `goal`, `description`, `duration_weeks`, `trainer_id`, `program_img`)
+            VALUES
+            ('$program_name', '$goal', '$description', $duration, $trainer_id, '$db_filename')";
+
+    $result = mysqli_query($conn, $sql);
+
+    if ($result) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => mysqli_error($conn)]);
+    }
+} else {
+    echo json_encode(['success' => false, 'error' => 'Missing required data.']);
+}
+?>
+
 
 
 

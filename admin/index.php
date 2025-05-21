@@ -3,7 +3,7 @@
 
     include __DIR__ . "/../config/db_connect.php"; 
 
-    $a_user_id = $_SESSION['l_info_id'];
+    $a_user_id = $_SESSION['l_user_id'];
 
     if($_SESSION['l_user_type'] != 'A'){
         header("location:index.php");
@@ -54,6 +54,9 @@
                         </li>
                         <li class="<?= $currentPage === 'subsplan' ? 'active' : '' ?>">
                             <a href="?page=subsplan"><i class="fas fa-dumbbell"></i> Subscription Plans</a>
+                        </li>
+                        <li class="<?= $currentPage === 'program_plans' ? 'active' : '' ?>">
+                            <a href="?page=program_plans"><i class="fas fa-calendar"></i>Program Plans</a>
                         </li>
                         <li>
                             <a href="?logout=true"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -274,7 +277,7 @@
                         ?>
 
                                     <!-- ==============Update Fitness Member form ================-->
-                                    <form action="update_fitness_trainer.php" method="POST" class="fitness_trainer-form" id="UpdateFitMem-form">
+                                    <form action="update_fitness_trainer.php" method="POST" class="fitness-trainer-form" id="UpdateFitMem-form">
                                         <div class="UpdateFitMem">
                                             <h2>Update Fitness Trainer</h2>
                                             <div id="message-container-fitness" class="message-container-fitness"></div>
@@ -309,7 +312,7 @@
 
 
                 <!--============= Add Fitness Trainer form===============-->
-                    <form action="new_fitness_trainer.php" method="POST" class="fitness_trainer-form" id="AddNewFitMem-form">
+                    <form action="new_fitness_trainer.php" method="POST" class="fitness-trainer-form" id="AddNewFitMem-form">
                         <div class="addNewFitMem"> 
                             <h2>Add New Fitness Member</h2>
                             <div id="message-container-fitness" class="message-container-fitness"></div>
@@ -337,7 +340,8 @@
                             <label for="fmn_trainer_prof_img">Trainer Profile Photo</label>
                             <input type="file" name="fmn_trainer_prof_img" id="fmn_trainer_prof_img" required>
                         </div>
-                    <button type="submit" class="btn-save">Add New Fitness Member</button>
+                        <button type="submit" class="btn-save">Add New Fitness Member</button>
+                    </form>
 
 
                 
@@ -431,7 +435,7 @@
     if($_GET['page'] == 'subsplan'){ ?>
 
 
-    <div class="form-container">     
+    <div class="form-container" style="padding-left: 28px;">     
                 <?php
                 /*Deactivate Subscription Plan Status*/
                         if(isset($_GET['deactivate_plan'])){
@@ -641,7 +645,273 @@
 
         <?php 
         } //end of subscriptionPage
+        
+        
+//=========================================== page - program plans ============================================  
+
+        if($_GET['page'] == 'program_plans'){ ?>
+
+       <div class="form-container">     
+                <?php
+                /*Deactivate Fitness Team*/
+                        if(isset($_GET['deactivate_progPlan'])){
+                            $program_id =$_GET['deactivate_progPlan'];
+
+                            $sql_deactivate_progPlan = "UPDATE `fitness_programs`
+                                                            SET `program_status`='I'
+                                                    WHERE `program_id`='$program_id';";
+
+                            mysqli_query($conn, $sql_deactivate_progPlan);
+                        }
+
+                /*Activate Fitness Team*/        
+                        if(isset($_GET['activate_progPlan'])){
+                            $program_id = $_GET['activate_progPlan'];
+
+                            $sql_activate_progPlan= "UPDATE `fitness_programs`
+                                                    SET `program_status`='A'
+                                                WHERE `program_id`='$program_id';";
+
+                            mysqli_query($conn,$sql_activate_progPlan);
+                        }
+                // Delete Fitness Team
+                        if(isset($_GET['delete_progPlan'])){
+                            $program_id = $_GET['delete_progPlan'];
+
+                            $sql_delete_progPlan = "DELETE FROM `fitness_programs` 
+                                                        WHERE `program_id`='$program_id';";
+                            mysqli_query($conn, $sql_delete_progPlan);
+                        }  
+                /*Update Fitness Team*/
+                        if(isset($_GET['update_progPlan'])){
+                            $program_id = $_GET['update_progPlan'];
+                            
+                            $sql_get_progPlan = "SELECT * FROM `fitness_programs`
+                                                        WHERE `program_id`='$program_id'";
+                            $result = mysqli_query($conn, $sql_get_progPlan);
+                            $data_row = mysqli_fetch_assoc($result);
+                        ?>
+
+                                    <!-- ==============Update Program Plan form ================-->
+                                    <form action="update_fitness_program.php" method="POST" class="fitness-program-form" id="UpdateFitProgram-form">
+                                        <div class="UpdateFitProg">
+                                            <h2>Update Fitness Program</h2>
+                                            <div id="message-container-fitness_prog" class="message-container-fitness-prog"></div>
+                                        </div>
+
+                                        <input type="hidden" name="ppu_program_id" value="<?php echo $data_row['program_id']; ?>">
+
+                                        <div class="form-group"> 
+                                            <label for="ppu_program_name">Program Name</label>
+                                            <input value="<?php echo htmlspecialchars($data_row['program_name']); ?>" type="text" name="ppu_program_name" id="ppu_program_name" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="ppu_program_goal">Goal</label>
+                                            <select name="ppu_program_goal" id="ppu_program_goal" required>
+                                                <option value="" disabled>Select a Goal</option>
+                                                <option value="lose_weight" <?php if ($data_row['program_goal'] === 'lose_weight') echo 'selected'; ?>>Lose Weight</option>
+                                                <option value="build_muscle" <?php if ($data_row['program_goal'] === 'build_muscle') echo 'selected'; ?>>Build Muscle</option>
+                                                <option value="muscle_toning" <?php if ($data_row['program_goal'] === 'muscle_toning') echo 'selected'; ?>>Muscle Toning</option>
+                                                <option value="increase_endurance" <?php if ($data_row['program_goal'] === 'increase_endurance') echo 'selected'; ?>>Increase Endurance</option>
+                                                <option value="general_fitness" <?php if ($data_row['program_goal'] === 'general_fitness') echo 'selected'; ?>>General Fitness</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="ppu_program_desc">Program Description</label>
+                                            <textarea name="ppu_program_desc" id="ppu_program_desc" rows="4" required><?php echo htmlspecialchars($data_row['program_desc']); ?></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="ppu_program_duration_weeks">Duration of Program (weeks)</label>
+                                            <select name="ppu_program_duration_weeks" id="ppu_program_duration_weeks" required>
+                                                <option value="" disabled>Select the duration</option>
+                                                <option value="3" <?php if ($data_row['program_duration_weeks'] == 3) echo 'selected'; ?>>3 weeks</option>
+                                                <option value="6" <?php if ($data_row['program_duration_weeks'] == 6) echo 'selected'; ?>>6 weeks</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Trainer dropdown populated dynamically -->
+                                        <div class="form-group">
+                                            <label for="ppu_program_trainer">Trainer</label>
+                                            <select name="ppu_program_trainer" id="ppu_program_trainer" required>
+                                                <option value="" disabled>Select a Trainer</option>
+                                                <?php
+                                                    include '../config/db_connect.php'; // Make sure path is correct
+                                                    $sql = "SELECT trainer_id, trainer_fullname, trainer_specialization FROM fitness_trainers";
+                                                    $result = mysqli_query($conn, $sql);
+
+                                                    if ($result && mysqli_num_rows($result) > 0) {
+                                                        while ($trainer = mysqli_fetch_assoc($result)) {
+                                                            $selected = $trainer['trainer_id'] == $data_row['trainer_id'] ? 'selected' : '';
+                                                            echo "<option value='{$trainer['trainer_id']}' $selected>" . htmlspecialchars($trainer['trainer_fullname']) . " - " . htmlspecialchars($trainer['trainer_specialization']) . "</option>";
+                                                        }
+                                                    } else {
+                                                        echo "<option disabled>No trainers found</option>";
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+
+                                        <button type="submit" class="btn-save">Update Fitness Program</button>
+                                    </form>
+                            
+                    <?php } ?>
+
+
+
+                <!--============= Add program plans form===============-->
+            
+                    <form action="new_fitness_program.php" method="POST" enctype="multipart/form-data" class="fitness-program-form" id="AddNewFitProgram-form">
+                        <div class="addNewFitProg"> 
+                            <h2>New Fitness Program</h2>
+                            <div id="message-container-programs" class="message-container-programs"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ppn_program_name">Program Name:</label>
+                            <input type="text" name="ppn_program_name" id="ppn_program_name" required>
+                        </div>
+                        <div class="form-group"> 
+                            <label for="ppn_program_goal">Goal:</label>
+                            <select name="ppn_program_goal" id="ppn_program_goal" required>
+                                <option value="" disabled selected>Select a Goal</option>
+                                <option value="lose_weight">Lose Weight</option>
+                                <option value="build_muscle">Build Muscle</option>
+                                <option value="muscle_toning">Muscle Toning</option>
+                                <option value="increase_endurance">Increase Endurance</option>
+                                <option value="general_fitness">General Fitness</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ppn_program_desc">Description:</label>
+                            <textarea name="ppn_program_desc" id="ppn_program_desc" rows="4" placeholder="Type here" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="ppn_program_img">Add Program Main Photo</label>
+                            <input type="file" name="ppn_program_img" id="ppn_program_img" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ppn_program_desc">Program Duration (weeks)</label>
+                            <select name="ppn_program_duration_weeks" id="ppn_program_duration_weeks" required>
+                                <option value="" disabled selected>Select the duration</option>
+                                <option value="3">3 weeks</option>
+                                <option value="6">6 weeks</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ppn_program_trainer">Trainer:</label>
+                            <select name="ppn_program_trainer" id="ppn_program_trainer">
+                                <option value="" disabled selected>Select a Trainer</option>
+                                <?php
+                                    include '../config/db_connect.php'; // adjust path if needed
+                                        $sql = "SELECT trainer_id, trainer_fullname, trainer_specialization 
+                                                    FROM fitness_trainers";
+                                        $result = mysqli_query($conn, $sql);
+        
+                                        if ($result && mysqli_num_rows($result) > 0) {
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                echo "<option value='{$row['trainer_id']}'>" . htmlspecialchars($row['trainer_fullname']) . " - " . htmlspecialchars($row['trainer_specialization']) . "</option>";
+                                            }
+                                        } else {
+                                            echo "<option disabled>No trainers found</option>";
+                                        }
+                                ?>
+                            </select>
+                        </div> 
+                        <button type="submit" class="btn-save">Add New Program Plan</button>
+                    </form>
+                        
+                    
+                                            
+                                <!--==========Active Subscription Plans===========-->
+                                <div class="subscription-plans">
+                                
+                                    <div class="plan-table">
+                                        <h3>Active Programs</h3>
+                                        <?php
+                                            $sql_get_program_plans = "SELECT * FROM `fitness_programs` WHERE `program_status`='A' ORDER BY program_id ASC";
+                                            $get_result = mysqli_query($conn, $sql_get_program_plans);
+                                        ?>
+                                        <table class="table">
+                                            <!-- Table Header with Column Titles -->
+                                            <thead>
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Name</th>
+                                                    <th>Goal</th>
+                                                    <th>Description</th>
+                                                    <th>Duration</th>
+                                                    <th>TrainerID</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($row = mysqli_fetch_assoc($get_result)) { ?>
+                                                    <tr>
+                                                        <td><img src="../img/<?php echo $row['program_main_img'];?>" alt="" class="img-fluid" width="50px"> </td>
+                                                        <td><?php echo $row['program_name']; ?></td>
+                                                        <td><?php echo $row['program_goal']; ?></td>
+                                                        <td><?php echo $row['program_desc']; ?></td>
+                                                        <td><?php echo $row['program_duration_weeks'] . " " . "weeks"; ?></td>
+                                                        <td><?php echo $row['trainer_id']; ?></td>
+                                                        <td>
+                                                            <a href="../admin/index.php?page=program_plans&update_progPlan=<?php echo $row['program_id']; ?>" class="btn btn-success">Update</a>
+                                                            <a href="../admin/index.php?page=program_plans&deactivate_progPlan=<?php echo $row['program_id']; ?>" class="btn btn-danger">Deactivate</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!--============Inactive Subscription Plans============-->
+                                    <div class="plan-table">
+                                        <h3>Inactive Programs</h3>
+                                        <?php
+                                            $sql_get_sub_plans2 = "SELECT * FROM `fitness_programs` WHERE `program_status`='I' ORDER BY program_id ASC";
+                                            $get_result2 = mysqli_query($conn, $sql_get_sub_plans2);
+                                        ?>
+                                        <table class="table">
+                                            <!-- Table Header with Column Titles -->
+                                            <thead>
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Name</th>
+                                                    <th>Goal</th>
+                                                    <th>Description</th>
+                                                    <th>Duration</th>
+                                                    <th>TrainerID</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($row = mysqli_fetch_assoc($get_result2)) { ?>
+                                                    <tr>
+                                                        <tr>
+                                                        <td><img src="../img/<?php echo $row['program_main_img'];?>" alt="" class="img-fluid" width="50px"> </td>
+                                                        <td><?php echo $row['program_name']; ?></td>
+                                                        <td><?php echo $row['program_goal']; ?></td>
+                                                        <td><?php echo $row['program_desc']; ?></td>
+                                                        <td><?php echo $row['program_duration_weeks'] . " " . "weeks"; ?></td>
+                                                        <td><?php echo $row['trainer_id']; ?></td>
+                                                        <td>
+                                                            <a href="../admin/index.php?page=program_plans&update_progPlan=<?php echo $row['program_id']; ?>" class="btn btn-success">Update</a>
+                                                            <a href="../admin/index.php?page=program_plans&activate_progPlan=<?php echo $row['program_id']; ?>" class="btn btn-info">Activate</a>
+                                                            <a href="../admin/index.php?page=program_plans&delete_progPlan=<?php echo $row['program_id']; ?>" class="btn btn-danger">Delete</a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> <!--end subscription-->
+        </div> <!--end form-container-->
+                                  
+        <?php 
+            } //end of program_plans
         ?>
+
 
 
 
