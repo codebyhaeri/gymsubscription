@@ -3,7 +3,7 @@
         
         include __DIR__ . "/../config/db_connect.php";
 
-        $u_user_id = $_SESSION['l_info_id']; //holds user id parameter for all processing
+        $c_user_id = $_SESSION['l_user_id']; //holds user id parameter for all processing
         
         if($_SESSION['l_user_type'] != 'C'){
             header("location: ../index.php");
@@ -27,7 +27,6 @@
  ?>
  <!DOCTYPE html>
  <html lang="en">
- <head>
  <head>
         <meta charset="utf-8">
         <title>FitLife - Premium Gym Memberships</title>
@@ -390,118 +389,77 @@
             <p>Our Trainers</p>
             <h2>Meet the FitLife Team</h2>
         </div>
-        <div class="row">
-            <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.0s">
-                <div class="team-item">
-                    <div class="team-img">
-                        <img src="../img/team-1.jpg" alt="Image">
-                        <div class="team-social">
-                            <a href=""><i class="fab fa-twitter"></i></a>
-                            <a href=""><i class="fab fa-facebook-f"></i></a>
-                            <a href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a href=""><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="team-text">
-                        <h2>Jan Hericka Orbase</h2>
-                        <p>Certified Fitness Coach</p>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="team-item">
-                    <div class="team-img">
-                        <img src="../img/team-2.jpg" alt="Image">
-                        <div class="team-social">
-                            <a href=""><i class="fab fa-twitter"></i></a>
-                            <a href=""><i class="fab fa-facebook-f"></i></a>
-                            <a href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a href=""><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="team-text">
-                        <h2>Leander Pines</h2>
-                        <p>Certified Fitness Coach</p>
-                    </div>
-                </div>
-            </div>
+        <?php
+        $conn = new mysqli("localhost", "root", "315683", "gymsubsdb");
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
 
-            <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.2s">
-                <div class="team-item">
-                    <div class="team-img">
-                        <img src="../img/team-3.jpg" alt="Image">
-                        <div class="team-social">
-                            <a href=""><i class="fab fa-twitter"></i></a>
-                            <a href=""><i class="fab fa-facebook-f"></i></a>
-                            <a href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a href=""><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="team-text">
-                        <h2>Princess Aira Layosa</h2>
-                        <p>Certified Fitness Coach</p>
-                    </div>
-                </div>
-            </div>
+        $sql = "SELECT * FROM fitness_trainers WHERE trainer_status = 'A'";
+        $result = $conn->query($sql);
 
-            <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="team-item">
-                    <div class="team-img">
-                        <img src="../img/team-4.jpg" alt="Image">
-                        <div class="team-social">
-                            <a href=""><i class="fab fa-twitter"></i></a>
-                            <a href=""><i class="fab fa-facebook-f"></i></a>
-                            <a href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a href=""><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="team-text">
-                        <h2>Joshua Obstaculo</h2>
-                        <p>Certified Fitness Coach</p>
-                    </div>
-                </div>
-            </div>
+        $delay = 0.0;
 
-            <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.4s">
-                <div class="team-item">
-                    <div class="team-img">
-                        <img src="../img/team-2.jpg" alt="Image">
-                        <div class="team-social">
-                            <a href=""><i class="fab fa-twitter"></i></a>
-                            <a href=""><i class="fab fa-facebook-f"></i></a>
-                            <a href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a href=""><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="team-text">
-                        <h2>Mica Villanueva</h2>
-                        <p>Group Class Instructor</p>
-                    </div>
-                </div>
-            </div>
+        echo '<div class="row justify-content-center">';
 
-            <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="team-item">
-                    <div class="team-img">
-                        <img src="../img/team-1.jpg" alt="Image">
-                        <div class="team-social">
-                            <a href=""><i class="fab fa-twitter"></i></a>
-                            <a href=""><i class="fab fa-facebook-f"></i></a>
-                            <a href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a href=""><i class="fab fa-instagram"></i></a>
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $profileImage = (!empty($row['trainer_profile_image']) && file_exists("../img/" . $row['trainer_profile_image']))
+                    ? "../img/" . $row['trainer_profile_image']
+                    : "../img/default-profile.jpg";
+
+                echo '
+                <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="' . number_format($delay, 1) . 's">
+                    <div class="team-item">
+                        <div class="team-img">
+                            <img src="' . htmlspecialchars($profileImage) . '" alt="Trainer Image">
+                            <div class="team-social">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <div class="team-text">
+                            <h2>' . htmlspecialchars($row['trainer_fullname']) . '</h2>
+                            <p>' . htmlspecialchars($row['trainer_specialization']) . '</p>
                         </div>
                     </div>
-                    <div class="team-text">
-                        <h2>Raymon Cruz</h2>
-                        <p>Strength Coach</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </div>';
+                $delay += 0.1;
+            }
+        } else {
+            echo "<p>No active trainers found.</p>";
+        }
+        
+        echo '</div>';
+
+        $conn->close();
+        ?>
+
+        <script>
+            window.addEventListener("load", () => {
+                const cards = document.querySelectorAll(".team-item");
+                let maxHeight = 0;
+
+                cards.forEach(card => {
+                    card.style.height = "auto";
+                    maxHeight = Math.max(maxHeight, card.offsetHeight);
+                });
+
+                cards.forEach(card => {
+                    card.style.height = maxHeight + "px";
+                });
+            });
+        </script>
     </div>
-</div>
-<!-- Team End -->
+</div> <!-- Team End -->
+
+
+
+
+
 
 
                 <!-- Blog Start -->
@@ -957,125 +915,80 @@
         <!-- Page Header End -->
 
 
-        <!-- Team Start -->
         <div class="team">
             <div class="container">
                 <div class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
                     <p>Our Trainers</p>
                     <h2>Meet the FitLife Team</h2>
                 </div>
-                <div class="row">
-                    <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.0s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="../img/team-1.jpg" alt="Image">
-                                <div class="team-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-text">
-                                <h2>Jan Hericka Orbase</h2>
-                                <p>Certified Fitness Coach</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="../img/team-2.jpg" alt="Image">
-                                <div class="team-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-text">
-                                <h2>Leander Pines</h2>
-                                <p>Certified Fitness Coach</p>
-                            </div>
-                        </div>
-                    </div>
+                <?php
+                $conn = new mysqli("localhost", "root", "315683", "gymsubsdb");
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
 
-                    <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="../img/team-3.jpg" alt="Image">
-                                <div class="team-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-text">
-                                <h2>Princess Aira Layosa</h2>
-                                <p>Certified Fitness Coach</p>
-                            </div>
-                        </div>
-                    </div>
+                $sql = "SELECT * FROM fitness_trainers WHERE trainer_status = 'A'";
+                $result = $conn->query($sql);
 
-                    <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="../img/team-4.jpg" alt="Image">
-                                <div class="team-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-text">
-                                <h2>Joshua Obstaculo</h2>
-                                <p>Certified Fitness Coach</p>
-                            </div>
-                        </div>
-                    </div>
+                $delay = 0.0;
 
-                    <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="../img/team-2.jpg" alt="Image">
-                                <div class="team-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
-                                </div>
-                            </div>
-                            <div class="team-text">
-                                <h2>Mica Villanueva</h2>
-                                <p>Group Class Instructor</p>
-                            </div>
-                        </div>
-                    </div>
+                // ✅ This is where you start the centered row
+                echo '<div class="row justify-content-center">';
 
-                    <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="../img/team-1.jpg" alt="Image">
-                                <div class="team-social">
-                                    <a href=""><i class="fab fa-twitter"></i></a>
-                                    <a href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a href=""><i class="fab fa-linkedin-in"></i></a>
-                                    <a href=""><i class="fab fa-instagram"></i></a>
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $profileImage = (!empty($row['trainer_profile_image']) && file_exists("../img/" . $row['trainer_profile_image']))
+                            ? "../img/" . $row['trainer_profile_image']
+                            : "../img/default-profile.jpg";
+
+                        echo '
+                        <div class="col-lg-2 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="' . number_format($delay, 1) . 's">
+                            <div class="team-item">
+                                <div class="team-img">
+                                    <img src="' . htmlspecialchars($profileImage) . '" alt="Trainer Image">
+                                    <div class="team-social">
+                                        <a href="#"><i class="fab fa-twitter"></i></a>
+                                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                        <a href="#"><i class="fab fa-instagram"></i></a>
+                                    </div>
+                                </div>
+                                <div class="team-text">
+                                    <h2>' . htmlspecialchars($row['trainer_fullname']) . '</h2>
+                                    <p>' . htmlspecialchars($row['trainer_specialization']) . '</p>
                                 </div>
                             </div>
-                            <div class="team-text">
-                                <h2>Raymon Cruz</h2>
-                                <p>Strength Coach</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </div>';
+                        $delay += 0.1;
+                    }
+                } else {
+                    echo "<p>No active trainers found.</p>";
+                }
+
+                // ✅ Close the centered row
+                echo '</div>';
+
+                $conn->close();
+                ?>
+
+                <script>
+                    window.addEventListener("load", () => {
+                        const cards = document.querySelectorAll(".team-item");
+                        let maxHeight = 0;
+
+                        cards.forEach(card => {
+                            card.style.height = "auto";
+                            maxHeight = Math.max(maxHeight, card.offsetHeight);
+                        });
+
+                        cards.forEach(card => {
+                            card.style.height = maxHeight + "px";
+                        });
+                    });
+                </script>
             </div>
-        </div>
-        <!-- Team End -->
+        </div> <!-- Team End -->
         <?php 
         } //end of trainers 
         
@@ -1167,31 +1080,83 @@
 
         <?php
             } //end of contact page
-        ?> 
+        
+//=========================================== page - edit Profile ======================================================   
+       
+    else if($_GET['page'] == 'editProfile'){ 
+
+    $profile_query = mysqli_query($conn, "SELECT * FROM user_profiles WHERE user_id = $c_user_id");
+    $profile = mysqli_fetch_assoc($profile_query);
+    ?>
+    
+    <!-- Page Content -->
+     <div class="container my-5">
+
+        <form id="profileForm" action="update_profile.php" method="POST" class="bg-white p-4 rounded shadow-sm mx-auto" style="max-width: 500px;">
             
+            <div id="alertBox" class="alert d-none mt-3" role="alert"></div>
+
+            <h2 class="text-2xl font-bold text-center mb-4">Your Profile</h2>
+
+        <form id="profileForm" action="../common_user/update_profile.php" method="POST" class="profile-form">
+            <h2>Your Profile</h2>
+
+            <input type="hidden" name="user_id" value="<?= $c_user_id ?>">
+
+            <label>Age</label>
+            <input type="number" name="age" value="<?= htmlspecialchars($profile['age']) ?>" min="18" max="70" disabled required>
+
+            <label>Height (cm)</label>
+            <input type="number" step="0.1" name="height_cm" value="<?= htmlspecialchars($profile['height_cm']) ?>" disabled required>
+
+            <label>Weight (kg)</label>
+            <input type="number" step="0.1" name="weight_kg" value="<?= htmlspecialchars($profile['weight_kg']) ?>" disabled required>
+
+            <label>Fitness Goal</label>
+            <select name="fitness_goal" disabled>
+                <option value="lose_weight" <?= $profile['fitness_goal'] == 'lose_weight' ? 'selected' : '' ?>>Lose Weight</option>
+                <option value="build_muscle" <?= $profile['fitness_goal'] == 'build_muscle' ? 'selected' : '' ?>>Build Muscle</option>
+                <option value="muscle_toning" <?= $profile['fitness_goal'] == 'muscle_toning' ? 'selected' : '' ?>>Muscle Toning</option>
+            </select>
+
+            <label>Activity Level</label>
+            <select name="activity_level" disabled>
+                <option value="sedentary" <?= $profile['activity_level'] == 'sedentary' ? 'selected' : '' ?>>Sedentary</option>
+                <option value="lightly_active" <?= $profile['activity_level'] == 'lightly_active' ? 'selected' : '' ?>>Lightly Active</option>
+                <option value="active" <?= $profile['activity_level'] == 'active' ? 'selected' : '' ?>>Active</option>
+                <option value="very_active" <?= $profile['activity_level'] == 'very_active' ? 'selected' : '' ?>>Very Active</option>
+            </select>
+
+            <label>Medical Conditions</label>
+            <textarea name="medical_conditions" disabled><?= htmlspecialchars($profile['medical_conditions']) ?></textarea>
+
+            <button id="updateBtn" type="submit" class="btn d-none">Update Profile</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <button onclick="enableEdit()" class="btn btn-edit">Edit</button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+        
+
+        <?php
+            } //end of editProfile
+        ?>  
+          
         <?php include_once "../footer.php";
 
             } //end of page
         ?> 
 
 
-        <script>
-            window.addEventListener('load', () => {
-                const items = document.querySelectorAll('.price-item');
-                let maxHeight = 0;
 
-                items.forEach(item => {
-                    item.style.height = 'auto'; // Reset first
-                    if (item.offsetHeight > maxHeight) {
-                        maxHeight = item.offsetHeight;
-                    }
-                });
-
-                items.forEach(item => {
-                    item.style.height = maxHeight + 'px';
-                });
-            });
-        </script>
 
         <!-- JavaScript Libraries -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -1207,7 +1172,78 @@
         <script src="mail/contact.js"></script>
 
         <!-- Template Javascript -->
-        <script src="js/main.js"></script>
+        <script src="../js/main.js"></script>
+        <script src="../js/common_user_script.js"></script>
+     
+    <script>
+    function enableEdit() {
+        const form = document.getElementById('profileForm');
+        const fields = form.querySelectorAll('input, select, textarea');
+        fields.forEach(field => {
+            if (field.name !== 'user_id') {
+                field.removeAttribute('disabled');
+            }
+        });
+        document.getElementById('updateBtn').classList.remove('d-none');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('profileForm');
+        const alertBox = document.getElementById('alertBox');
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+
+                fetch('../common_user/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showAlert('success', data.message);
+                        disableFormInputs();
+                        document.getElementById('updateBtn').classList.add('d-none');
+                    } else {
+                        showAlert('danger', data.message);
+                    }
+                })
+                .catch(error => {
+                    showAlert('danger', 'Unexpected error: ' + error.message);
+                });
+            });
+        }
+
+        function disableFormInputs() {
+            const fields = form.querySelectorAll('input, select, textarea');
+            fields.forEach(field => field.setAttribute('disabled', 'disabled'));
+        }
+
+        function showAlert(type, message) {
+            alertBox.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+            alertBox.innerHTML = `
+                <strong>${type === 'success' ? 'Success!' : 'Error!'}</strong> ${message}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            `;
+            alertBox.classList.remove('d-none');
+
+            // Scroll to alert box smoothly
+            alertBox.scrollIntoView({ behavior: 'smooth' });
+
+            // Hide after 4 seconds
+            setTimeout(() => {
+                $(alertBox).fadeOut(500, () => {
+                    alertBox.classList.add('d-none');
+                    alertBox.style.display = '';
+                });
+            }, 4000);
+        }
+    });
+</script>
+
  </body>
  </html>
 
