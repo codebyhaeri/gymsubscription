@@ -1,0 +1,84 @@
+
+    /* FitLife Colors from your palette */
+    :root {
+        --fitlife-darkest: #3B0016;
+        --fitlife-dark: #6B0837;
+        --fitlife-medium: #A53A6B;
+        --fitlife-light: #E573A2;
+        --fitlife-pale: #F7A1C4;
+    }
+
+    /* Reset & Body */
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Open Sans', sans-serif;
+        background: #fff;
+        color: #797979;
+        margin: 0; 
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    /* Container */
+    .subscribe-container {
+        background-color: var(--fitlife-pale);
+        border-radius: 10px;
+        padding: 30px 25px;
+        width: 380px;
+        box-shadow: 0 4px 8px rgba(107, 8, 55, 0.2);
+        color: var(--fitlife-darkest);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 700;
+        color: var(--fitlife-dark);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: var(--fitlife-dark);
+    }
+
+    select {
+        width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+        border-radius: 6px;
+        border: 1px solid var(--fitlife-dark);
+        font-size: 1rem;
+        background: #fff;
+        color: var(--fitlife-darkest);
+        transition: border-color 0.3s ease;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: var(--fitlife-medium);
+        box-shadow: 0 0 6px var(--fitlife-medium);
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 12px 0;
+        border: none;
+        border-radius: 7px;
+        background-color: var(--fitlife-medium);
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: var(--fitlife-dark);
+    }

@@ -1,0 +1,258 @@
+dit profile
+:root {
+  --fitlife-darkest: #3B0016;
+  --fitlife-dark: #6B0837;
+  --fitlife-medium: #A53A6B;
+  --fitlife-light: #E573A2;
+  --fitlife-pale: #F7A1C4;
+  --neon-pink: #ff2d95;
+  --neon-purple: #a53a6b;
+  --bg-dark: #1a0a14;
+  --text-dark: #3B0016;
+  --shadow-dark: rgba(107, 8, 55, 0.15);
+}
+
+
+
+body {
+  background: var(--bg-dark);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.main-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1050px;
+  width: 100%;
+  color: var(--text-dark);
+}
+
+/* Card base */
+.card {
+  position: relative;
+  background: #fff; /* White background */
+  padding: 28px 30px 30px 48px;
+  border-radius: 20px;
+  box-shadow: 0 12px 22px var(--shadow-dark);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px var(--shadow-dark);
+}
+
+/* Neon accent vertical bar */
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--neon-pink), var(--neon-purple));
+  border-radius: 20px 0 0 20px;
+  filter: drop-shadow(0 0 5px var(--neon-pink));
+  z-index: 1;
+}
+
+/* Large card specific */
+.large-card {
+  flex: 0 0 320px;
+  height: 670px;
+  padding-left: 60px;
+  margin-top: 25px;
+}
+
+/* Small cards container stacked vertically */
+.small-card-stack {
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Small card */
+.small-card {
+  padding-left: 60px;
+  width: 250px;
+  margin-top: 30px;
+}
+
+/* Avatar container */
+.avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow:
+    0 0 8px var(--neon-pink),
+    inset 0 0 10px var(--neon-purple);
+}
+
+/* Profile images */
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* Hover avatar zoom */
+.card:hover .avatar img {
+  transform: scale(1.07);
+}
+
+/* Neon gradient overlay shape on avatar */
+.avatar-overlay {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+  opacity: 0.15;
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Username - sporty font */
+.user-name {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--fitlife-darkest);
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Info lines */
+.info {
+  font-size: 15px;
+  color: var(--fitlife-darkest);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+  font-weight: 600;
+}
+
+/* Info icons */
+.info i {
+  color: var(--fitlife-medium);
+  min-width: 20px;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+/* Edit button */
+.edit-btn {
+  margin-top: auto;
+  background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  box-shadow: 0 0 12px var(--neon-pink);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.edit-btn i {
+  font-size: 18px;
+}
+
+.edit-btn:hover {
+  box-shadow: 0 0 24px var(--neon-purple);
+  transform: scale(1.1);
+}
+
+.membership-card {
+
+  display: flex;
+  
+  flex-direction: column;
+  gap: 15px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.membership-header {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--fitlife-darkest);
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.membership-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  width: fit-content;
+  padding-top: 20px;
+  
+}
+
+.membership-status.active {
+  background-color: #e1f8e7;
+  color: #2e7d32;
+  border-left: 5px solid #4caf50;
+}
+
+.membership-status.inactive {
+  background-color: #ffe5e5;
+  color: #c62828;
+  border-left: 5px solid #e53935;
+}
+
+.membership-details {
+  font-size: 14px;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.membership-details i {
+  color: var(--fitlife-medium);
+  margin-right: 8px;
+}
+
+
+.info-container{
+
+  margin-top: 30px;
+}

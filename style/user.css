@@ -933,21 +933,39 @@ a:focus {
 }
 
 
+
 /*******************************/
 /*********** Team CSS **********/
 /*******************************/
+
 .team {
-    position: relative;
-    width: 100%;
-    padding: 45px 0 15px 0;
+  display: flex;
+  justify-content: center; /* center the row horizontally */
+  width: 100%;
+  padding: 0 0 15px 0;
+}
+
+.team-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* center cards */
+    gap: 20px;
 }
 
 .team .team-item {
-    position: relative;
-    margin-bottom: 30px;
-    padding: 15px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, .07);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%; /* ensures full width in col */
+    height: 100%;
+    box-sizing: border-box;
+    margin: 10px 5px; /*adjusts the space between the cards*/
+}
+
+.col-lg-2 {
+    flex: 0 0 200px;
+    max-width: 200px;
 }
 
 .team .team-img {
@@ -1038,6 +1056,33 @@ a:focus {
     margin: 0;
 }
 
+.team .team-item {
+    height: 280px; /* fixed height for all trainer cards */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.team .team-img {
+    height: 180px;      /* fixed image container height */
+    overflow: hidden;   /* crop overflow */
+    border-radius: 8px; /* rounded corners */
+    margin-bottom: 10px;
+    position: relative; /* keep social icons inside */
+}
+
+.team .team-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* cover the container, crop if needed */
+    border-radius: 8px;
+}
+
+.team-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* spacing between cards */
+}
 
 /*******************************/
 /******* Testimonial CSS *******/
@@ -1967,3 +2012,155 @@ a:focus {
         text-align: center;
     }
 }
+
+/* ================= subscribe and payments css =================== */
+
+.gym-subscription-wrapper {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.gym-subscription-wrapper h2 {
+  color: #2f4f4f;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.gym-plan-card {
+  margin-bottom: 15px;
+  padding: 15px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.gym-plan-card:hover {
+  border-color: cadetblue;
+  background-color: #f7fdfd;
+}
+
+.gym-plan-card input[type="radio"] {
+  margin-right: 10px;
+}
+
+.gym-plan-card b {
+  font-size: 1.1em;
+}
+
+.gym-subscription-wrapper p {
+  margin: 5px 0 0;
+  font-size: 0.9em;
+  color: #444;
+}
+
+.gym-subscribe-btn {
+  background-color: cadetblue;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto 0;
+}
+
+.gym-subscribe-btn:hover {
+  background-color: #397c7c;
+}
+
+ /* Container for the form */
+    .subscribe-container {
+        max-width: 400px;
+        width: 100%;
+        background: #fff;
+        padding: 30px 40px;
+        box-shadow: 0 4px 12px rgb(165 58 107 / 0.2);
+        border-radius: 8px;
+    }
+
+    /* Heading */
+    .subscribe-container h2 {
+        margin-bottom: 30px;
+        color: var(--fitlife-darkest);
+        font-weight: 700;
+        font-size: 28px;
+        text-align: center;
+    }
+
+    /* Form Elements */
+    form label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--fitlife-dark);
+        font-size: 14px;
+    }
+
+    select, button {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 2px solid var(--fitlife-pale);
+        outline: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+    select:focus {
+        border-color: var(--fitlife-medium);
+        box-shadow: 0 0 6px var(--fitlife-pale);
+    }
+
+    button {
+        background-color: var(--fitlife-darkest);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        margin-top: 25px;
+        letter-spacing: 1px;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover,
+    button:focus {
+        background-color: var(--fitlife-medium);
+        outline: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+        .subscribe-container {
+            padding: 20px 25px;
+        }
+        .subscribe-container h2 {
+            font-size: 24px;
+        }
+    }
+
+    .nav-btn {
+    position: relative;
+    padding-right: 20px;
+}
+
+.active-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    background-color: #e91e63; /* bright pink/red */
+    border-radius: 50%;
+    display: none;
+}
+
+.nav-btn.highlight {
+    background-color: var(--fitlife-light);
+    color: white;
+    /* or any other highlight effect */
+}
+
+

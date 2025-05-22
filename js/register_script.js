@@ -81,3 +81,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initial render
   showStep(currentStep);
 });
+
+if (currentStep === steps.length - 1) {
+  nextBtn.textContent = "Submit";
+  nextBtn.type = "submit";
+} else {
+  nextBtn.textContent = "Next";
+  nextBtn.type = "button";
+}
+
