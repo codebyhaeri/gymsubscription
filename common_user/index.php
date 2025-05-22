@@ -50,6 +50,18 @@
 
         <!-- Template Stylesheet -->
         <link href="../style/user.css" rel="stylesheet">
+
+          <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        />
+
+        <!-- Your CSS -->
+        <link rel="stylesheet" href="../style/try.css" />
     </head>
     <body>
 
@@ -340,8 +352,6 @@
                             // Determine type text
                             $plan_type = strtolower($row['plan_type']);
                             switch ($plan_type) {
-                                case 'daily': $period = '/ day'; break;
-                                case 'weekly': $period = '/ wk'; break;
                                 case 'monthly': $period = '/ mo'; break;
                                 case 'yearly': $period = '/ yr'; break;
                                 default: $period = ''; break;
@@ -368,7 +378,7 @@
                                     </div>
                                     <div class='price-footer mt-auto'>
                                         <div class='price-action'>
-                                            <a class='btn' href='#'>Choose this Plan</a>
+                                            <a class='btn' href='index.php?page=subscribe&plan_id={$row['plan_id']}'>Choose this Plan</a>
                                         </div>
                                     </div>
                                 </div>
@@ -756,7 +766,7 @@
                                     </div>
                                     <div class='price-footer mt-auto'>
                                         <div class='price-action'>
-                                            <a class='btn' href='#'>Choose this Plan</a>
+                                            <a class='btn' href='index.php?page=subscribe&plan_id={$row['plan_id']}'>Choose this Plan</a>
                                         </div>
                                     </div>
                                 </div>
@@ -959,69 +969,343 @@
 
         <?php
             } //end of contact page
+
+// ========================================== program plans =======================================
         
-//=========================================== page - edit Profile ======================================================   
-       
-    else if($_GET['page'] == 'editProfile'){ 
 
-    $profile_query = mysqli_query($conn, "SELECT * FROM user_profiles WHERE user_id = $c_user_id");
-    $profile = mysqli_fetch_assoc($profile_query);
-    ?>
-    
-    <!-- Page Content -->
-     <div class="container my-5">
+    else if($_GET['page'] == 'programs'){ ?>
+  
+        <!-- Page Header Start -->
+        <div class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Classes</h2>
+                    </div>
+                    <div class="col-12">
+                        <a href="">Home</a>
+                        <a href="">Classes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Page Header End -->
 
-        <form id="profileForm" action="update_profile.php" method="POST" class="bg-white p-4 rounded shadow-sm mx-auto" style="max-width: 500px;">
-            
-            <div id="alertBox" class="alert d-none mt-3" role="alert"></div>
+        <?php
+        $subscribed = false;
+        $today = date('Y-m-d');
 
-            <h2 class="text-2xl font-bold text-center mb-4">Your Profile</h2>
+        // Check if user has an active subscription today
+        $query = "SELECT * FROM subscriptions 
+                WHERE user_id = $c_user_id 
+                    AND subs_status = 'active' 
+                    AND subs_start_date <= '$today' 
+                    AND subs_end_date >= '$today'
+                LIMIT 1";
 
-        <form id="profileForm" action="../common_user/update_profile.php" method="POST" class="profile-form">
-            <h2>Your Profile</h2>
+        $result = mysqli_query($conn, $query);
+        if ($result && mysqli_num_rows($result) > 0) {
+            $subscribed = true;
+        }
+        ?>
 
-            <input type="hidden" name="user_id" value="<?= $c_user_id ?>">
+        <?php if (!$subscribed): ?>
+        <?php include '../popup.php'; ?>
+        <style>
+            .class-container { display: none; }
+        </style>
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                const popup = document.getElementById('subscription-popup');
+                if (popup) {
+                    popup.style.display = 'flex'; // or whatever layout you use
+                }
+            });
+        </script>
+    <?php endif; ?>
 
-            <label>Age</label>
-            <input type="number" name="age" value="<?= htmlspecialchars($profile['age']) ?>" min="18" max="70" disabled required>
 
-            <label>Height (cm)</label>
-            <input type="number" step="0.1" name="height_cm" value="<?= htmlspecialchars($profile['height_cm']) ?>" disabled required>
 
-            <label>Weight (kg)</label>
-            <input type="number" step="0.1" name="weight_kg" value="<?= htmlspecialchars($profile['weight_kg']) ?>" disabled required>
+        
 
-            <label>Fitness Goal</label>
-            <select name="fitness_goal" disabled>
-                <option value="lose_weight" <?= $profile['fitness_goal'] == 'lose_weight' ? 'selected' : '' ?>>Lose Weight</option>
-                <option value="build_muscle" <?= $profile['fitness_goal'] == 'build_muscle' ? 'selected' : '' ?>>Build Muscle</option>
-                <option value="muscle_toning" <?= $profile['fitness_goal'] == 'muscle_toning' ? 'selected' : '' ?>>Muscle Toning</option>
-            </select>
+        <div class="class">
+    <div class="container">
+        <div class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
+            <p>Our Classes</p>
+            <h2>Group Fitness Schedule</h2>
+        </div>
 
-            <label>Activity Level</label>
-            <select name="activity_level" disabled>
-                <option value="sedentary" <?= $profile['activity_level'] == 'sedentary' ? 'selected' : '' ?>>Sedentary</option>
-                <option value="lightly_active" <?= $profile['activity_level'] == 'lightly_active' ? 'selected' : '' ?>>Lightly Active</option>
-                <option value="active" <?= $profile['activity_level'] == 'active' ? 'selected' : '' ?>>Active</option>
-                <option value="very_active" <?= $profile['activity_level'] == 'very_active' ? 'selected' : '' ?>>Very Active</option>
-            </select>
+        <div class="row">
+            <div class="col-12">
+                <ul id="class-filter">
+                    <li data-filter="*" class="filter-active">All Programs</li>
+                    <li data-filter=".filter-lose_weight">Lose Weight</li>
+                    <li data-filter=".filter-build_muscle">Build Muscle</li>
+                    <li data-filter=".filter-muscle_toning">Muscle Toning</li>
+                </ul>
+            </div>
+        </div>
 
-            <label>Medical Conditions</label>
-            <textarea name="medical_conditions" disabled><?= htmlspecialchars($profile['medical_conditions']) ?></textarea>
+        <div class="row class-container">
+            <?php
 
-            <button id="updateBtn" type="submit" class="btn d-none">Update Profile</button>
-        </form>
+            // Fetch active programs
+            $query = "SELECT * FROM fitness_programs WHERE program_status = 'A'";
+            $result = mysqli_query($conn, $query);
 
-        <div class="text-center mt-3">
-            <button onclick="enableEdit()" class="btn btn-edit">Edit</button>
+            if ($result && mysqli_num_rows($result) > 0):
+                while ($row = mysqli_fetch_assoc($result)):
+                    $goal_class = "filter-" . strtolower($row['program_goal']);
+                    $program_name = htmlspecialchars($row['program_name']);
+                    $program_desc = htmlspecialchars($row['program_desc']);
+                    $program_img = !empty($row['program_main_img']) ? '../img/' . $row['program_main_img'] : '../img/class-default.jpg';
+
+                    
+                  $trainer_img = 'img/teacher-default.png'; // default image
+
+                if (!empty($row['trainer_id'])) {
+                    $trainer_query = mysqli_query($conn, "
+                        SELECT trainer_fullname, trainer_profile_image 
+                        FROM fitness_trainers 
+                        WHERE trainer_id = " . intval($row['trainer_id']) . " 
+                        AND trainer_status = 'A'
+                    ");
+
+                    if ($trainer = mysqli_fetch_assoc($trainer_query)) {
+                        $trainer_name = $trainer['trainer_fullname'];
+                        if (!empty($trainer['trainer_profile_image'])) {
+                            $trainer_img = '../img/' . $trainer['trainer_profile_image'];
+                        }
+                    }
+                }
+            ?>
+                <div class="col-lg-4 col-md-6 col-sm-12 class-item <?php echo $goal_class; ?> wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="class-wrap">
+                        <div class="class-img">
+                            <img src="<?php echo $program_img; ?>" alt="<?php echo $program_name; ?>">
+                        </div>
+                        <div class="class-text">
+                            <div class="class-teacher">
+                                <img src="<?php echo $trainer_img; ?>" alt="<?php echo $trainer_name; ?>">
+                                <h3><?php echo $trainer_name; ?></h3>
+                                <a href="#">+</a>
+                            </div>
+                            <h2><?php echo $program_name; ?></h2>
+                            <div class="class-meta">
+                                <p><i class="far fa-calendar-alt"></i><?php echo $row['program_duration_weeks']; ?> Weeks</p>
+                                <p><i class="far fa-info-circle"></i><?php echo $program_desc; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php
+                endwhile;
+            else:
+                echo "<p class='text-center'>No active programs available.</p>";
+            endif;
+            ?>
         </div>
     </div>
+</div>
 
 
 
 
 
 
+
+
+
+
+
+        <?php
+            } //end of subscribe page 
+
+
+
+//=========================================== page - edit Profile ======================================================   
+       
+    else if($_GET['page'] == 'editProfile'){ ?>
+<!-- Page Content -->
+<div class="container my-5">
+  <!-- Inline Scoped Styles -->
+  <style>
+    .container.my-5 .profile-form {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .container.my-5 .profile-form h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #3B0016;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .container.my-5 .profile-form label {
+      display: block;
+      margin-bottom: .5rem;
+      font-weight: 600;
+      color: #6B0837;
+    }
+    .container.my-5 .profile-form input,
+    .container.my-5 .profile-form select,
+    .container.my-5 .profile-form textarea {
+      width: 100%;
+      padding: .75rem 1rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid #A53A6B;
+      border-radius: 8px;
+      background: #F7A1C4;
+      color: #3B0016;
+      font-size: 1rem;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .container.my-5 .profile-form input:focus,
+    .container.my-5 .profile-form select:focus,
+    .container.my-5 .profile-form textarea:focus {
+      outline: none;
+      border-color: #E573A2;
+      box-shadow: 0 0 8px rgba(229,115,162,0.5);
+    }
+    .container.my-5 .profile-form .btn-edit,
+    .container.my-5 .profile-form #updateBtn {
+      display: inline-block;
+      padding: .75rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #A53A6B;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color .3s;
+      margin-right: .5rem;
+    }
+    .container.my-5 .profile-form .btn-edit:hover,
+    .container.my-5 .profile-form #updateBtn:hover {
+      background-color: #6B0837;
+    }
+    .container.my-5 .profile-form #updateBtn.d-none {
+      display: none;
+    }
+    .container.my-5 .profile-form #alertBox {
+      margin-bottom: 1rem;
+      padding: .75rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .container.my-5 .profile-form #alertBox.alert-success {
+      background: #E573A2; color: #fff;
+    }
+    .container.my-5 .profile-form #alertBox.alert-error {
+      background: #6B0837; color: #fff;
+    }
+  </style>
+
+<?php
+
+
+$sql = "
+  SELECT
+    u.user_id,
+    u.fullname,
+    u.email,
+    u.gender,
+    u.address,
+    u.contact_number,
+    p.age,
+    p.height_cm,
+    p.weight_kg,
+    p.fitness_goal,
+    p.activity_level,
+    p.medical_conditions
+  FROM users u
+  LEFT JOIN user_profiles p ON u.user_id = p.user_id
+  WHERE u.user_id = ?
+  LIMIT 1
+";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $c_user_id);
+$stmt->execute();
+$profile = $stmt->get_result()->fetch_assoc();
+
+
+
+// If no row, initialize defaults to avoid “undefined index” warnings
+if (!$profile) {
+    $profile = [
+        'fullname'            => '',
+        'email'               => '',
+        'gender'              => '',
+        'address'             => '',
+        'contact_number'      => '',
+        'age'                 => '',
+        'height_cm'           => '',
+        'weight_kg'           => '',
+        'fitness_goal'        => '',
+        'activity_level'      => '',
+        'medical_conditions'  => ''
+    ];
+}
+?>
+  <form id="profileForm" action="../common_user/update_profile.php" method="POST" class="profile-form">
+    <div id="alertBox" class="alert d-none" role="alert"></div>
+    <h2 class="text-2xl">Your Profile</h2>
+
+    <input type="hidden" name="user_id" value="<?= $c_user_id ?>">
+
+    <label>Full Name</label>
+    <input type="text" name="age" value="<?= htmlspecialchars($profile['fullname']) ?>" min="18" max="70" disabled required>
+
+    <label>Age</label>
+    <input type="number" name="age" value="<?= htmlspecialchars($profile['age']) ?>" min="18" max="70" disabled required>
+
+    <label>Height (cm)</label>
+    <input type="number" step="0.1" name="height_cm" value="<?= htmlspecialchars($profile['height_cm']) ?>" disabled required>
+
+    <label>Weight (kg)</label>
+    <input type="number" step="0.1" name="weight_kg" value="<?= htmlspecialchars($profile['weight_kg']) ?>" disabled required>
+
+    <label>Fitness Goal</label>
+    <select name="fitness_goal" disabled>
+      <option value="lose_weight" <?= $profile['fitness_goal']=='lose_weight'?'selected':''?>>Lose Weight</option>
+      <option value="build_muscle" <?= $profile['fitness_goal']=='build_muscle'?'selected':''?>>Build Muscle</option>
+      <option value="muscle_toning" <?= $profile['fitness_goal']=='muscle_toning'?'selected':''?>>Muscle Toning</option>
+      <option value="improve_endurance" <?= $profile['fitness_goal']=='improve_endurance'?'selected':''?>>Improve Endurance</option>
+      <option value="general_fitness" <?= $profile['fitness_goal']=='general_fitness'?'selected':''?>>General Fitness</option>
+    </select>
+
+    <label>Activity Level</label>
+    <select name="activity_level" disabled>
+      <option value="sedentary" <?= $profile['activity_level']=='sedentary'?'selected':''?>>Sedentary</option>
+      <option value="lightly_active" <?= $profile['activity_level']=='lightly_active'?'selected':''?>>Lightly Active</option>
+      <option value="active" <?= $profile['activity_level']=='active'?'selected':''?>>Active</option>
+      <option value="very_active" <?= $profile['activity_level']=='very_active'?'selected':''?>>Very Active</option>
+    </select>
+
+    <label>Medical Conditions</label>
+    <textarea name="medical_conditions" disabled><?= htmlspecialchars($profile['medical_conditions']) ?></textarea>
+
+    <button id="updateBtn" type="submit" class="d-none">Update Profile</button>
+    <button type="button" onclick="enableEdit()" class="btn-edit">Edit Profile</button>
+  </form>
+</div>
+
+<script>
+function enableEdit() {
+  document.querySelectorAll('.profile-form input, .profile-form select, .profile-form textarea')
+    .forEach(el => el.disabled = false);
+  document.getElementById('updateBtn').classList.remove('d-none');
+}
+</script>
+
+    
+
+  
 
         
 
@@ -1036,7 +1320,9 @@
 
 
 
-
+        <script>
+            const userHasActivePlan = <?php echo json_encode($hasActivePlan); ?>;
+        </script>
         <!-- JavaScript Libraries -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
@@ -1121,6 +1407,42 @@
             }, 4000);
         }
     });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    // Show all items on page load
+    $('.class-item').show();
+
+    $('#class-filter li').click(function(){
+        var filterValue = $(this).attr('data-filter');
+        
+        // Update active class on buttons
+        $('#class-filter li').removeClass('filter-active');
+        $(this).addClass('filter-active');
+
+        if(filterValue === '*'){
+            // Show all class items
+            $('.class-item').show();
+        } else {
+            // Hide all, then show those matching the filter
+            $('.class-item').hide();
+            $(filterValue).show();
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (userHasActivePlan) {
+        const dot = document.getElementById('activeDot');
+        if (dot) {
+            dot.style.display = 'inline-block';
+        }
+        // Optional: add class to highlight button
+        document.getElementById('programNavigatorBtn').classList.add('highlight');
+    }
+});
 </script>
 
  </body>

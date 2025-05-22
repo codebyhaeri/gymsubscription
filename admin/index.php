@@ -20,6 +20,7 @@
         header("location: index.php?page=memberSubscriptions");
         exit;
     }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,11 +48,11 @@
                             <a href="?page=memberSubscriptions"><i class="fas fa-users"></i> Member Subscriptions</a>
                         </li>
                         <li class="<?= $currentPage === 'fitness_trainers' ? 'active' : '' ?>">
-                            <a href="?page=fitness_trainers"><i class="fas fa-dumbbell"></i>Fitness Trainers</a>
+                            <a href="?page=fitness_trainers"><i class="fas fa-running"></i>Fitness Trainers</a>
                         </li>
-                        <li class="<?= $currentPage === 'payments' ? 'active' : '' ?>">
+                        <!-- <li class="   ">
                             <a href="?page=payments"><i class="fas fa-credit-card"></i> Payments & Billing</a>
-                        </li>
+                        </li> -->
                         <li class="<?= $currentPage === 'subsplan' ? 'active' : '' ?>">
                             <a href="?page=subsplan"><i class="fas fa-dumbbell"></i> Subscription Plans</a>
                         </li>
@@ -69,7 +70,7 @@
 
 
 
-                    <!--========================= Page starts here ============================== -->
+                <!--========================= Page starts here ============================== -->
 
 
     <?php if(isset($_GET['page'])){ 
@@ -79,77 +80,78 @@
 
         if($_GET['page'] == 'memberSubscriptions'){ ?>
 
+        
+        <script src="js/memberSubscriptions.js"></script>
+
+
             <!-- Main Content -->
-        <main class="main-content">
-            <header class="content-header">
-                <h2>Member Subscriptions</h2>
-                <div class="user-actions">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search members...">
+            <main class="main-content">
+                <header class="content-header">
+                    <h2>Member Subscriptions</h2>
+                    <div class="user-actions">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search members...">
+                            <ul id="suggestionList" class="suggestion-list"></ul>
+                        </div>
+                        <button class="btn primary" onclick="window.location.href='add_member.php'">
+                            <i class="fas fa-plus"></i> Add Member
+                        </button>
                     </div>
-                    <button class="btn primary"><i class="fas fa-plus"></i> Add Member</button>
-                </div>
-            </header>
+                </header>
 
-        <!-- Subscription Status Tabs -->
-            <div class="status-tabs">
-                <button class="tab active">Active (42)</button>
-                <button class="tab">Expired (8)</button>
-                <button class="tab">Pending (5)</button>
-            </div>
-
-        <!-- Member Subscriptions Table -->
-            <div class="card">
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date Joined</th>
-                                <th>Member Name</th>
-                                <th>Subscription Plan</th>
-                                <th>Status</th>
-                                <th>Next Payment</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Sep 5, 2025</td>
-                                <td>
-                                    <div class="member-info">
-                                        <div class="avatar">JS</div>
-                                        <div>
-                                            <div class="name">John Santos</div>
-                                            <div class="email">john.s@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="plan-tag premium">
-                                        <i class="fas fa-crown"></i> Monthly - Gym + Zumba
-                                    </span>
-                                </td>
-                                <td><span class="status-badge active">Active</span></td>
-                                <td>
-                                    <div class="payment-due">
-                                        <div>Oct 5, 2025</div>
-                                        <div class="days-remaining">(3 days remaining)</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Additional rows would go here -->
-                        </tbody>
-                    </table>
+                <!-- Filter Tabs -->
+                <div class="status-tabs">
+                    <button class="tab active" data-status="active">Active</button>
+                    <button class="tab" data-status="expired">Expired</button>
+                    <button class="tab" data-status="pending">Pending</button>
                 </div>
 
-                <div class="table-footer">
-                    <div class="showing-text">Showing 10 out of 15 subscriptions</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <!-- <th>Date</th>
+                            <th>Member</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Next Payment</th>
+                            <th>Actions</th> -->
+
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Plan</th>
+                            <th>Type</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscriptionsTableBody">
+                        <!-- Rows loaded via JS -->
+                    </tbody>
+                </table>
+
+                <?php
+                $totalQuery = "SELECT COUNT(*) AS total FROM subscriptions";
+                $totalResult = $conn->query($totalQuery);
+                $totalRow = $totalResult->fetch_assoc();
+                $totalSubscriptions = $totalRow['total'] ?? 0;
+
+                $shownQuery = "
+                    SELECT COUNT(*) AS shown 
+                    FROM subscriptions s
+                    WHERE s.subs_status IN ('active', 'pending')
+                    AND s.subs_end_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                ";
+                $shownResult = $conn->query($shownQuery);
+                $shownRow = $shownResult->fetch_assoc();
+                $shownSubscriptions = $shownRow['shown'] ?? 0;
+
+                ?>
+                            
+                <div class="table-footer" style="margin-bottom: 25px">                             
+                        <div class="showing-text">
+                            Showing <?php echo $shownSubscriptions; ?> out of <?php echo $totalSubscriptions; ?> subscriptions
+                        </div>
                     <div class="pagination">
                         <button class="btn-icon"><i class="fas fa-chevron-left"></i></button>
                         <button class="page-btn active">1</button>
@@ -158,10 +160,10 @@
                         <button class="btn-icon"><i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
-            </div>
+            </div> 
 
-            <!-- Upcoming Renewals Section -->
-            <div class="card">
+            <!-- Upcoming Renewals Section  -->
+             <div class="card">
                 <div class="card-header">
                     <h3><i class="far fa-calendar-alt"></i> Upcoming Renewals</h3>
                     <button class="btn secondary small">View Calendar</button>
@@ -179,31 +181,88 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <div class="member-info">
-                                        <div class="avatar">SJ</div>
-                                        <div>
-                                            <div class="name">Satin Johnson</div>
-                                            <div class="email">satin.j@example.com</div>
-                                        </div>
+                            <tbody>
+<?php
+// Query upcoming renewals for subscriptions that are active or pending, expiring within 30 days
+                $query = "
+                    SELECT u.fullname, u.email, sp.plan_name, s.subs_status, s.subs_end_date
+                    FROM subscriptions s
+                    JOIN users u ON s.user_id = u.user_id
+                    JOIN subscription_plans sp ON s.plan_id = sp.plan_id
+                    WHERE s.subs_status IN ('active', 'pending')
+                    AND s.subs_end_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                    ORDER BY s.subs_end_date ASC
+                    LIMIT 20
+                ";
+
+                $result = $conn->query($query);
+
+                if ($result && $result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $today = new DateTime();
+                        $endDate = new DateTime($row['subs_end_date']);
+                        $interval = $today->diff($endDate);
+                        $daysRemaining = (int)$interval->format('%r%a');
+
+                        // Status badge classes
+                        $status = strtolower($row['subs_status']);
+                        $badgeClass = 'status-badge ';
+                        if ($status === 'active') {
+                            $badgeClass .= 'active';
+                        } elseif ($status === 'pending') {
+                            $badgeClass .= 'pending';
+                        } elseif ($status === 'expired') {
+                            $badgeClass .= 'expired';
+                        } else {
+                            $badgeClass .= 'unknown';
+                        }
+
+                        // Time remaining classes
+                        $timeClass = 'time-remaining ';
+                        if ($daysRemaining <= 5 && $daysRemaining >= 0) {
+                            $timeClass .= 'warning';
+                        } elseif ($daysRemaining < 0) {
+                            $timeClass .= 'expired';
+                        } else {
+                            $timeClass .= 'normal';
+                        }
+
+                        // Get initials for avatar (max 2 letters)
+                        $names = explode(' ', $row['fullname']);
+                        $initials = '';
+                        foreach ($names as $n) {
+                            $initials .= strtoupper($n[0]);
+                        }
+                        $initials = substr($initials, 0, 2);
+
+                        echo '<tr>';
+                        echo '<td>
+                                <div class="member-info">
+                                    <div class="avatar">' . htmlspecialchars($initials) . '</div>
+                                    <div>
+                                        <div class="name">' . htmlspecialchars($row['fullname']) . '</div>
+                                        <div class="email">' . htmlspecialchars($row['email']) . '</div>
                                     </div>
-                                </td>
-                                <td>Monthly - Gym + Zumba</td>
-                                <td><span class="status-badge active">Active</span></td>
-                                <td>Oct 5, 2025</td>
-                                <td><span class="time-remaining warning">3 days</span></td>
-                                <td>
-                                    <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                </div>
+                            </td>';
+                        echo '<td>' . htmlspecialchars($row['plan_name']) . '</td>';
+                        echo '<td><span class="' . $badgeClass . '">' . ucfirst($status) . '</span></td>';
+                        echo '<td>' . date('M j, Y', strtotime($row['subs_end_date'])) . '</td>';
+                        echo '<td><span class="' . $timeClass . '">' . ($daysRemaining >= 0 ? $daysRemaining . ' days' : 'Expired') . '</span></td>';
+                        echo '<td>
+                                <button class="btn-icon" title="More options"><i class="fas fa-ellipsis-v"></i></button>
+                            </td>';
+                        echo '</tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="6" style="text-align:center;">No upcoming renewals found.</td></tr>';
+                }
+                ?>
+                </tbody>
+                </main>
 
                     <!-- Quick Add Section -->
-                    <div class="card quick-add">
+                    <!-- <div class="card quick-add">
                         <h3><i class="fas fa-user-plus"></i> Add New Membership</h3>
                         <div class="add-options">
                             <button class="option-card">
@@ -223,7 +282,7 @@
                 </main>
             </div>
         </body>
-        </html>
+        </html> -->
 
         <?php 
             } //end of memberships page 
@@ -727,15 +786,15 @@
                                             <label for="ppu_program_duration_weeks">Duration of Program (weeks)</label>
                                             <select name="ppu_program_duration_weeks" id="ppu_program_duration_weeks" required>
                                                 <option value="" disabled>Select the duration</option>
-                                                <option value="3" <?php if ($data_row['program_duration_weeks'] == 3) echo 'selected'; ?>>3 weeks</option>
-                                                <option value="6" <?php if ($data_row['program_duration_weeks'] == 6) echo 'selected'; ?>>6 weeks</option>
+                                                <option value="3" <?php if ($data_row['program_duration_weeks'] == 3) echo 'selected'; ?>>3 weeks(1 month)</option>
+                                                <option value="52" <?php if ($data_row['program_duration_weeks'] == 52) echo 'selected'; ?>>6 weeks(1 year)</option>
                                             </select>
                                         </div>
 
                                         <!-- Trainer dropdown populated dynamically -->
                                         <div class="form-group">
                                             <label for="ppu_program_trainer">Trainer</label>
-                                            <select name="ppu_program_trainer" id="ppu_program_trainer" required>
+                                            <select name="ppu_program_trainer" id="ppu_program_trainer" required>)
                                                 <option value="" disabled>Select a Trainer</option>
                                                 <?php
                                                     include '../config/db_connect.php'; // Make sure path is correct
@@ -912,22 +971,12 @@
             } //end of program_plans
         ?>
 
-
-
-
-
-
-
-
-
-
-
-
     <?php 
         } //end of page
     ?>
 
     <script src="../js/bootstrap.js"></script>
     <script src="../js/admin_script.js"></script>
+    
 </body>
 </html>
