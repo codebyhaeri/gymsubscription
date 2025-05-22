@@ -61,27 +61,24 @@ if(isset($_GET['logout'])){
                 </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav ml-auto">
-                            <a href="?page=home" class="nav-item nav-link">Home</a>
-                            <a href="?page=about" class="nav-item nav-link">About</a>
-                            <!-- <a href="?page=memberships" class="nav-item nav-link">Memberships</a> -->
-                            <a href="?page=trainers" class="nav-item nav-link">Trainers</a>
-                            <a href="?page=programs" class="nav-item nav-link">Programs</a>
-                            <a href="?page=memberships" class="nav-item nav-link">Memberships</a>
+                            <a href="index.php?page=home" class="nav-item nav-link">Home</a>
+                            <a href="index.php?page=about" class="nav-item nav-link">About</a>
+                            <a href="index.php?page=trainers" class="nav-item nav-link">Trainers</a>
+                            <a href="index.php?page=programs" class="nav-item nav-link">Programs</a>
+                            <a href="index.php?page=memberships" class="nav-item nav-link">Memberships</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Account</a>
                                 <div class="dropdown-menu">
-                                    <!-- <a href="../common_user/edit_profile.php" class="dropdown-item">Profile</a> -->
-                                    <a href="?page=editProfile" class="dropdown-item">Profile</a>
-                                    <a href="?logout=true" class="dropdown-item">Log Out</a>
+                                    <a href="index.php?page=editProfile" class="dropdown-item">Profile</a>
                                     <a href="../common_user/subscribe.php" class="dropdown-item">Subscribe</a>
+                                    <a href="../index.php?logout=true" class="dropdown-item">Log Out</a>  
                                 </div>
                             </div>
                         </div>
                     </div>
             </div>
         </div>
-
-        <!-- Nav Bar End -->
+    <!-- Nav Bar End -->
 
     <!-- JavaScript Libraries -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

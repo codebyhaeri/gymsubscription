@@ -198,164 +198,68 @@ if(isset($_SESSION['l_user_type'])) {
         <!-- Discount End -->
         
         
-        <!-- Price Start -->
-        <div class="price">
-            <div class="container">
-                <div class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
-                    <p>Yoga Package</p>
-                    <h2>Yoga Pricing Plan</h2>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.0s">
-                        <div class="price-item">
-                            <div class="price-header">
-                                <div class="price-title">
-                                    <h2>Basic</h2>
-                                </div>
-                                <div class="price-prices">
-                                    <h2><small>$</small>49<span>/ mo</span></h2>
-                                </div>
-                            </div>
-                            <div class="price-body">
-                                <div class="price-description">
-                                    <ul>
-                                        <li>Personal Trainer</li>
-                                        <li>Special Class</li>
-                                        <li>Free Tutorials</li>
-                                        <li>Group Training</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="price-footer">
-                                <div class="price-action">
-                                    <a class="btn" href="">Join Now</a>
-                                </div>
-                            </div>
-                        </div>
+        <!<!--=======Subscription Plan Pricing ===========-->
+
+            <div class="price">
+                <div class="container">
+                    <div class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
+                        <p>FITlife Package</p>
+                        <h2>FITlife Pricing Plan</h2>
                     </div>
-                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="price-item featured-item">
-                            <div class="price-header">
-                                <div class="price-status">
-                                    <span>Popular</span>
+                    <div class="row d-flex flex-wrap">
+                        <?php
+                        $sql = "SELECT * FROM subscription_plans WHERE plan_status = 'A' ORDER BY plan_price ASC";
+                        $result = mysqli_query($conn, $sql);
+
+                        $delay = 0.0;
+                        $count = 0;
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $delay_value = number_format($delay, 1) . "s";
+                            $is_featured = ($count === 1) ? "featured-item" : ""; // Make 2nd item featured
+                            $is_popular = ($count === 1) ? "<div class='price-status'><span>Popular</span></div>" : "";
+
+                            // Determine type text
+                            $plan_type = strtolower($row['plan_type']);
+                            switch ($plan_type) {
+                                case 'monthly': $period = '/ mo'; break;
+                                case 'yearly': $period = '/ yr'; break;
+                                default: $period = ''; break;
+                            }
+
+                            echo "
+                            <div class='col-md-4 d-flex wow fadeInUp' data-wow-delay='{$delay_value}'>
+                                <div class='price-item {$is_featured} w-100 d-flex flex-column'>
+                                    <div class='price-header'>
+                                        {$is_popular}
+                                        <div class='price-title'>
+                                            <h2>" . htmlspecialchars($row['plan_tier']) . "</h2>
+                                        </div>
+                                        <div class='price-prices'>
+                                            <h2><small>₱</small>" . number_format($row['plan_price'], 2) . "<span>{$period}</span></h2>
+                                        </div>
+                                    </div>
+                                    <div class='price-body'>
+                                        <div class='price-description'>
+                                            <ul>
+                                                <li>" . nl2br(htmlspecialchars($row['plan_desc'])) . "</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class='price-footer mt-auto'>
+                                        <div class='price-action'>
+                                            <a class='btn' href='index.php?page=subscribe&plan_id={$row['plan_id']}'>Choose this Plan</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="price-title">
-                                    <h2>Standard</h2>
-                                </div>
-                                <div class="price-prices">
-                                    <h2><small>$</small>99<span>/ mo</span></h2>
-                                </div>
-                            </div>
-                            <div class="price-body">
-                                <div class="price-description">
-                                    <ul>
-                                        <li>Personal Trainer</li>
-                                        <li>Special Class</li>
-                                        <li>Free Tutorials</li>
-                                        <li>Group Training</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="price-footer">
-                                <div class="price-action">
-                                    <a class="btn" href="">Join Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="price-item">
-                            <div class="price-header">
-                                <div class="price-title">
-                                    <h2>Premium</h2>
-                                </div>
-                                <div class="price-prices">
-                                    <h2><small>$</small>149<span>/ mo</span></h2>
-                                </div>
-                            </div>
-                            <div class="price-body">
-                                <div class="price-description">
-                                    <ul>
-                                        <li>Personal Trainer</li>
-                                        <li>Special Class</li>
-                                        <li>Free Tutorials</li>
-                                        <li>Group Training</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="price-footer">
-                                <div class="price-action">
-                                    <a class="btn" href="">Join Now</a>
-                                </div>
-                            </div>
-                        </div>
+                            </div>";
+                            $delay += 0.3;
+                            $count++;
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Price End -->
-        
-        
-        <!-- Testimonial Start -->
-        <!-- <div class="testimonial wow fadeInUp" data-wow-delay="0.1s">
-            <div class="container">
-                <div class="section-header text-center">
-                    <p>Testimonial</p>
-                    <h2>Our Client Say!</h2>
-                </div>
-                <div class="owl-carousel testimonials-carousel">
-                    <div class="testimonial-item">
-                        <div class="testimonial-img">
-                            <img src="img/testimonial-1.jpg" alt="Image">
-                        </div>
-                        <div class="testimonial-text">
-                            <p>
-                                Lorem ipsum dolor sit amet consec adipis elit. Etiam accums lacus eget velit tincid, quis suscip justo dictum.
-                            </p>
-                            <h3>Customer Name</h3>
-                            <h4>Profession</h4>
-                        </div>
-                    </div>
-                    <div class="testimonial-item">
-                        <div class="testimonial-img">
-                            <img src="img/testimonial-2.jpg" alt="Image">
-                        </div>
-                        <div class="testimonial-text">
-                            <p>
-                                Lorem ipsum dolor sit amet consec adipis elit. Etiam accums lacus eget velit tincid, quis suscip justo dictum.
-                            </p>
-                            <h3>Customer Name</h3>
-                            <h4>Profession</h4>
-                        </div>
-                    </div>
-                    <div class="testimonial-item">
-                        <div class="testimonial-img">
-                            <img src="img/testimonial-3.jpg" alt="Image">
-                        </div>
-                        <div class="testimonial-text">
-                            <p>
-                                Lorem ipsum dolor sit amet consec adipis elit. Etiam accums lacus eget velit tincid, quis suscip justo dictum.
-                            </p>
-                            <h3>Customer Name</h3>
-                            <h4>Profession</h4>
-                        </div>
-                    </div>
-                    <div class="testimonial-item">
-                        <div class="testimonial-img">
-                            <img src="img/testimonial-4.jpg" alt="Image">
-                        </div>
-                        <div class="testimonial-text">
-                            <p>
-                                Lorem ipsum dolor sit amet consec adipis elit. Etiam accums lacus eget velit tincid, quis suscip justo dictum.
-                            </p>
-                            <h3>Customer Name</h3>
-                            <h4>Profession</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <!-- Testimonial End -->
+
 
         <!-- Footer Start -->
         <div class="footer wow fadeIn" data-wow-delay="0.3s">

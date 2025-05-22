@@ -1,78 +1,101 @@
 <?php
-
+session_start();
 include_once "./config/db_connect.php";
 
-    // Basic user info
-    $fullname = $_POST['s_fullname'];
-    $usrnm = $_POST['s_username']; 
-    $psswrd = $_POST['s_password']; 
-    $conf_psswrd = $_POST['s_conf_password']; 
-    $contact = $_POST['s_contact_number']; 
-    $address = $_POST['s_address']; 
-    $gender = $_POST['s_gender'];
-    $email = $_POST['s_email'];
+// Helper to send error and exit
+function abort($msg) {
+    header("Location: register.php?error=" . urlencode($msg));
+    exit;
+}
 
-    // Extended user fitness profile info
-    $age = $_POST['s_age'];
-    $height = $_POST['s_height'];
-    $weight = $_POST['s_weight'];
-    $fitness_level = $_POST['s_fitness_level'];
-    $goal = $_POST['s_goal'];
-    $conditions = $_POST['s_conditions'];
-    $time_pref = $_POST['s_time_pref'];
-    $activity_level = $_POST['s_activity_level'];
+// 1) Collect & validate POST
+$fullname       = trim($_POST['s_fullname'] ?? '');
+$username       = trim($_POST['s_username'] ?? '');
+$password       = $_POST['s_password']   ?? '';
+$conf_password  = $_POST['s_conf_password'] ?? '';
+$contact        = trim($_POST['s_contact_number'] ?? '');
+$address        = trim($_POST['s_address'] ?? '');
+$gender         = $_POST['s_gender']     ?? '';
+$email          = trim($_POST['s_email'] ?? '');
 
-    // Password match check
-    function chk_pass($p1, $p2) {
-        return ($p1 == $p2) ? 1 : 0;
-    }
-    if(!chk_pass($psswrd, $conf_psswrd)){
-        header("location: register.php?error=Password mismatch");
-        die;
-    }
+// Fitness profile
+$age            = intval($_POST['s_age'] ?? 0);
+$height         = floatval($_POST['s_height'] ?? 0);
+$weight         = floatval($_POST['s_weight'] ?? 0);
+$goal           = $_POST['s_goal'] ?? '';
+$conditions     = trim($_POST['s_conditions'] ?? '');
+$time_pref      = $_POST['s_time_pref'] ?? '';
+$activity_level = $_POST['s_activity_level'] ?? '';
 
-    // Email uniqueness
-    $verify_query = mysqli_query($conn, "SELECT email FROM users WHERE email='$email'");
-    if(mysqli_num_rows($verify_query) != 0) {
-        header("location: register.php?error=Email already registered");
-        die;
-    }
+// Basic validation
+if (!$fullname || !$username || !$email || !$password) {
+    abort("Please fill in all required fields.");
+}
+if ($password !== $conf_password) {
+    abort("Passwords do not match.");
+}
 
-    // Username uniqueness
-    $sql_chk_user = "SELECT user_id FROM users WHERE `username` = '$usrnm'";
-    $sql_result = mysqli_query($conn, $sql_chk_user);
-    if(mysqli_num_rows($sql_result) > 0){
-        header("location: register.php?error=Username already exists");
-        die;
-    }
+// 2) Check email uniqueness
+$stmt = $conn->prepare("SELECT 1 FROM users WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    abort("That email is already registered.");
+}
 
-    // Insert into users table
-    $sql_new_user = "INSERT INTO `users`
-    (`fullname`, `username`, `password`, `contact_number`, `address`, `gender`, `email`)
-    VALUES
-    ('$fullname','$usrnm','$psswrd','$contact','$address','$gender', '$email')";
-    $execute_query = mysqli_query($conn, $sql_new_user);
+// 3) Check username uniqueness
+$stmt = $conn->prepare("SELECT 1 FROM users WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$stmt->store_result();
+if ($stmt->num_rows > 0) {
+    abort("Username already exists.");
+}
 
-    if(!$execute_query){
-        header("location: register.php?error=Insert Failed");
-        die;
-    }
+// 4) Insert into `users` WITHOUT hashing
+$stmt = $conn->prepare("
+    INSERT INTO users
+      (fullname, username, password, contact_number, address, gender, email)
+    VALUES (?,?,?,?,?,?,?)
+");
+$stmt->bind_param(
+    "sssssss",
+    $fullname,
+    $username,
+    $password,     // store raw password
+    $contact,
+    $address,
+    $gender,
+    $email
+);
+if (!$stmt->execute()) {
+    abort("Failed to create user: " . $stmt->error);
+}
+$new_user_id = $conn->insert_id;
 
-    // Get user_id of the newly created user
-    $new_user_id = mysqli_insert_id($conn);
+// 5) Insert into `user_profiles` (omit time_preference if column not present)
+$stmt = $conn->prepare("
+    INSERT INTO user_profiles
+      (user_id, age, height_cm, weight_kg, fitness_goal, activity_level, medical_conditions)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+");
+$stmt->bind_param(
+    "iddssss",
+    $new_user_id,
+    $age,            // i
+    $height,         // d
+    $weight,         // d
+    $goal,           // s
+    $activity_level, // s
+    $conditions      // s
+);
+if (!$stmt->execute()) {
+    // rollback user insert
+    $conn->query("DELETE FROM users WHERE user_id = $new_user_id");
+    abort("Profile insert failed: " . $stmt->error);
+}
 
-    // Insert into user_profiles
-    $sql_profile = "INSERT INTO `user_profiles`
-    (`user_id`, `age`, `height_cm`, `weight_kg`, `fitness_goal`, `activity_level`, `medical_conditions`)
-    VALUES
-    ($new_user_id, $age, $height, $weight, '$goal', '$activity_level', '$conditions')";
-
-    $profile_result = mysqli_query($conn, $sql_profile);
-
-    if (!$profile_result) {
-        header("location: register.php?error=Profile insert failed");
-    } else {
-        header("location: login.php?msg=Successfully registered");
-    }
-
-?>
+// 6) Success!
+header("Location: login.php?msg=" . urlencode("Successfully registered — please log in."));
+exit;
